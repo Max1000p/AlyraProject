@@ -32,6 +32,7 @@ truffle test
 
 ## Test structure
 All test are realized by state process to control function, expect, event, and revert
+
 44 Tests
 
 - Testing getter function and access right
