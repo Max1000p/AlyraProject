@@ -146,8 +146,14 @@ contract('Voting', accounts => {
 
             it("Voter account can add proposal", async () => {
                 await VotingInstance.addProposal('DUPONT', {from: second});
-                const storedData = await VotingInstance.getOneProposal(1, {from: second});
+                const storedData = await VotingInstance.getOneProposal(new BN(1), {from: second});
                 expect(storedData.description).to.be.equal('DUPONT');
+            });
+
+            it("Voter account add proposal, vote count value is 0", async () => {
+                await VotingInstance.addProposal('DUPONT', {from: second});
+                const storedData = await VotingInstance.getOneProposal(new BN(1), {from: second});
+                expect(storedData.voteCount).to.be.bignumber.equal(new BN(0));
             });
 
             it("Voter account can't add an empty proposal", async () => {
@@ -220,6 +226,12 @@ contract('Voting', accounts => {
                 await VotingInstance.setVote(new BN(0), {from: second});
                 const storedData = await VotingInstance.getVoter(second, {from: second});
                 expect(storedData.votedProposalId).to.be.bignumber.equal(new BN(0));
+            });
+
+            it("should vote count works when a vote is processing", async () =>  {
+                await VotingInstance.setVote(new BN(0), {from: second});
+                const storedData = await VotingInstance.getOneProposal(new BN(0), {from: second});
+                expect(storedData.voteCount).to.be.bignumber.equal(new BN(1));
             });
 
             it("Voter account can't vote if already vote (hasVoted) ", async () => {
